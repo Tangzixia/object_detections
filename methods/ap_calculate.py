@@ -1,3 +1,5 @@
+#coding=utf-8
+
 """
 author: Timothy C. Arlen
 date: 28 Feb 2018
@@ -206,10 +208,12 @@ def get_avg_precision_at_iou(gt_boxes, pred_boxes, iou_thr=0.5):
     #           'img_00213.png', 'img_00172.png']}
     ### 对于所有的图片中的预测框的置信度由低到高排序，注意这是所有的pred_scores的排序
     sorted_model_scores = sorted(model_scores_map.keys())
+    # 原本有3318个置信度框，然而在这儿打印出来却只有1695个置信度，因为有的框的置信度预测一致
     ### [0.05, 0.0501, 0.0502, 0.0503, 0.0504, 0.0505, 0.0506, 0.0507, 0.0508, 0.0509, 0.051, 0.0511, 0.0512, 0.0513, 0.0514, 0.0515, 0.0516, 0.0517, 0.0518, 0.0519, 0.052,...,0.9978]
 
     # Sort the predicted boxes in descending order (lowest scoring boxes first):
     # but for the single image, you should to know whether it is true~
+    # 在这儿可以提前看到其实对该类别的所有的检测按照置信度进行排序了一遍～
     for img_id in pred_boxes.keys():
         arg_sort = np.argsort(pred_boxes[img_id]['scores'])
         pred_boxes[img_id]['scores'] = np.array(pred_boxes[img_id]['scores'])[arg_sort].tolist()
@@ -309,7 +313,6 @@ if __name__ == "__main__":
     avg_precs = []
     iou_thrs = []
     for idx, iou_thr in enumerate(np.linspace(0.5, 0.95, 10)):
-        print("=======================")
         data = get_avg_precision_at_iou(gt_boxes, pred_boxes, iou_thr=iou_thr)
         avg_precs.append(data['avg_prec'])
         iou_thrs.append(iou_thr)
